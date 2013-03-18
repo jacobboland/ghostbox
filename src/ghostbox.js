@@ -24,11 +24,11 @@
             container = $container[0],
             self = this;
 
-        container
-            .bind('mousedown', function (e){
+        $container
+            .on('mousedown', function (e){
                 self.createGhost(e);
             })
-            .bind('mouseup', function (e) {
+            .on('mouseup', function (e) {
                 self.removeGhost();
             });
 
@@ -45,7 +45,7 @@
         var cursor = e,
             self = this;
 
-        if ($(e.srcElement).is(this.ghostContainer)){
+        if ($(e.target).is(this.ghostContainer)){
             if (e.type.substring(0, 5) === 'touch'){
                 cursor = e.targetTouches[0];
             }
@@ -64,22 +64,22 @@
             });
 
             $(this.ghostContainer)
-                .bind('mousemove', function (e){
+                .on('mousemove', function (e){
                     self.resizeGhost(e);
                 })
-                .bind('mouseup', function (e){
+                .on('mouseup', function (e){
                     self.removeGhost();
                 })
-                .bind('mouseout', function (e){
+                .on('mouseout', function (e){
                     self.onMouseOut(e);
                 });
 
-            this.touchMoveHandler = this.addEventListener('touchmove', function (e){
+            this.touchMoveHandler = this.ghostContainer.addEventListener('touchmove', function (e){
                 self.touchResize(e);
             });
-            this.addEventListener('touchend', function (e){
-            self.removeGhost();
-        });
+            this.ghostContainer.addEventListener('touchend', function (e){
+                self.removeGhost();
+            });
         }
         return false;
     };
@@ -135,7 +135,7 @@
             });
         }
         $(this.ghostContainer).unbind('mousemove mouseout mouseup');
-        this.removeEventListener("touchmove", this.touchMoveHandler);
+        this.ghost[0].removeEventListener("touchmove", this.touchMoveHandler);
         this.ghost.remove();
     };
 
@@ -143,5 +143,5 @@
         return this.each(function () {
             new Ghostbox(this, options);
         });
-    }
+    };
 })(jQuery);
